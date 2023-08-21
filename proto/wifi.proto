@@ -1,0 +1,73 @@
+// syntax = "proto3";
+
+// package wifi;
+
+// // The book store service definition.
+// service Wifi {
+//   // Retrieve a book
+//   rpc GetWifi(WifiDataRequest) returns (WifiDataResponse) {}
+// }
+
+// // The request with a id of the book
+// message WifiDataRequest {
+//   string id = 1;
+// }
+
+// // The response details of a book
+// message WifiDataResponse {
+//   string id = 1;
+//   string name = 2;
+//   string author = 3;
+//   int32 year = 4;
+// }
+
+
+syntax = "proto3";
+
+package wifi;
+
+// The book store service definition.
+service Wifi {
+  // Retrieve a book
+  rpc GetWifi(Empty) returns (ScanResults) {}
+}
+
+// The request with a id of the book
+message Empty {}
+
+// The response details of a book
+message ScanResult {
+    string mac = 1;
+    string frequency = 2;
+    int32 signal = 3;
+    string flags = 4;
+    string name = 5;
+}
+
+message ScanResults {
+  repeated ScanResult results = 1;
+}
+
+// syntax = "proto3";
+
+// package wifi;
+
+// message ScanResult {
+//     string mac = 1;
+//     string frequency = 2;
+//     int32 signal = 3;
+//     string flags = 4;
+//     string name = 5;
+// }
+
+// service WiFiScanService {
+//     rpc GetScanResults (ScanRequest) returns (ScanResponse);
+// }
+
+// message ScanRequest {
+//     // You can define any request fields here if needed
+// }
+
+// message ScanResponse {
+//     repeated ScanResult results = 1;
+// }
