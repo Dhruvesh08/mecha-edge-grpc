@@ -2,9 +2,16 @@
 use env_logger::Env;
 use log::{error, info};
 use wifi_ctrl::{sta::{self, ScanResult}, Result};
+use once_cell::sync::OnceCell; 
+
+
+static LOGGER_INITIALIZED: OnceCell<()> = OnceCell::new();
 
 pub async fn get_wifi_list() -> Result<Vec<ScanResult>> {
-    env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
+    LOGGER_INITIALIZED.get_or_init(|| {
+        env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
+    });
+
     info!("Starting wifi-sta example");
 
     let mut setup = sta::WifiSetup::new()?;
