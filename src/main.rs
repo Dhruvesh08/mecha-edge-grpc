@@ -5,7 +5,7 @@ mod wifi;
 use wifi::wifi_server::{Wifi, WifiServer};
 use wifi::{Empty, ScanResult, ScanResults};
 
-use mecha_edge_sdk::get_wifi_list;
+use mecha_device_sdk::get_wifi_list;
 
 //wifi struct with default implementation
 #[derive(Default)]
