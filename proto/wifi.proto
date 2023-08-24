@@ -30,6 +30,7 @@ package wifi;
 service Wifi {
   // Retrieve a book
   rpc GetWifi(Empty) returns (ScanResults) {}
+  rpc GetKnownWifi(Empty) returns (ScanResults) {}
 }
 
 // The request with a id of the book

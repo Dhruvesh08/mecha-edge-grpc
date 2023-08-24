@@ -48,6 +48,32 @@ impl Wifi for WifiImpl {
 
         Ok(Response::new(scan_results))
     }
+
+    async fn get_known_wifi(
+        &self,
+        request: Request<Empty>,
+    ) -> Result<Response<ScanResults>, Status> {
+        println!("Got a request: {:?}", request);
+
+        let mut scan_results = ScanResults::default();
+
+        //get wifi list from mecha_edge_sdk
+        let wifi_list = get_wifi_list().await.unwrap();
+
+        //add wifi list to scan_results
+        for wifi in wifi_list {
+            let mut scan_result = ScanResult::default();
+            scan_result.mac = wifi.mac;
+            scan_result.frequency = wifi.frequency;
+            scan_result.signal = wifi.signal as i32;
+            scan_result.flags = wifi.flags;
+            scan_result.name = wifi.name;
+            scan_results.results.push(scan_result);
+        }
+
+
+        Ok(Response::new(scan_results))
+    }
 }
 
 #[tokio::main]
