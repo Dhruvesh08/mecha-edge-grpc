@@ -65,7 +65,7 @@ impl Wifi for WifiImpl {
         &self,
         request: Request<WifiConnectRequest>,
     ) -> Result<Response<WifiConnectResponse>, Status> {
-        let wifi_connect_response = WifiConnectResponse::default();
+        let mut wifi_connect_response = WifiConnectResponse::default();
 
         log::info!("Starting Wifi Connect Function");
 
@@ -77,9 +77,18 @@ impl Wifi for WifiImpl {
 
         //get get_connect_wifi from mecha_edge_sdk
         //get_connect_wifi  accepts ssid and psk as parameter
-        let _connect_wifi = mecha_device_sdk::get_connect_wifi(&ssid, &psk)
-            .await
-            .unwrap();
+        let connect_wifi = mecha_device_sdk::get_connect_wifi(&ssid, &psk).await;
+
+        match connect_wifi {
+            Ok(_) => {
+                wifi_connect_response.success = true;
+                wifi_connect_response.message = "WiFi connection successful".to_string();
+            }
+            Err(_) => {
+                wifi_connect_response.success = false;
+                wifi_connect_response.message = "WiFi connection failed".to_string();
+            }
+        }
 
         Ok(Response::new(wifi_connect_response))
     }
