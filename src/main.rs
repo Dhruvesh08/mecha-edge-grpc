@@ -60,7 +60,7 @@ impl Wifi for WifiImpl {
         //add wifi list to scan_results
         for wifi in wifi_list {
             let mut scan_result = NetworkResult::default();
-            scan_result.network_id = wifi.network_id.to_string();
+            scan_result.network_id = wifi.network_id as i32;
             scan_result.flags = wifi.flags;
             scan_result.ssid = wifi.ssid;
             scan_results.results.push(scan_result);

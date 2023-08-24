@@ -1,8 +1,8 @@
-/// The request with a id of the book
+/// emplty wifi
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Empty {}
-/// The response details of a book
+/// The response details of a wifi list
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ScanResult {
@@ -26,8 +26,8 @@ pub struct ScanResults {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct NetworkResult {
-    #[prost(string, tag = "1")]
-    pub network_id: ::prost::alloc::string::String,
+    #[prost(int32, tag = "1")]
+    pub network_id: i32,
     #[prost(string, tag = "2")]
     pub ssid: ::prost::alloc::string::String,
     #[prost(string, tag = "3")]
@@ -44,7 +44,7 @@ pub mod wifi_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     use tonic::codegen::http::Uri;
-    /// The book store service definition.
+    /// The wifi service definition.
     #[derive(Debug, Clone)]
     pub struct WifiClient<T> {
         inner: tonic::client::Grpc<T>,
@@ -183,7 +183,7 @@ pub mod wifi_server {
             request: tonic::Request<super::Empty>,
         ) -> std::result::Result<tonic::Response<super::NetworkResults>, tonic::Status>;
     }
-    /// The book store service definition.
+    /// The wifi service definition.
     #[derive(Debug)]
     pub struct WifiServer<T: Wifi> {
         inner: _Inner<T>,
