@@ -23,6 +23,11 @@ pub struct ScanResults {
     #[prost(message, repeated, tag = "1")]
     pub results: ::prost::alloc::vec::Vec<ScanResult>,
 }
+/// make message for known wifipub struct NetworkResult {
+/// pub network_id: usize,
+/// pub ssid: String,
+/// pub flags: String,
+/// }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct NetworkResult {
@@ -125,7 +130,7 @@ pub mod wifi_client {
             self.inner = self.inner.max_encoding_message_size(limit);
             self
         }
-        /// Retrieve a book
+        /// Retrieve a wifi list
         pub async fn get_wifi(
             &mut self,
             request: impl tonic::IntoRequest<super::Empty>,
@@ -145,6 +150,7 @@ pub mod wifi_client {
             req.extensions_mut().insert(GrpcMethod::new("wifi.Wifi", "GetWifi"));
             self.inner.unary(req, path, codec).await
         }
+        /// Retrieve a known wifi list
         pub async fn get_known_wifi(
             &mut self,
             request: impl tonic::IntoRequest<super::Empty>,
@@ -173,11 +179,12 @@ pub mod wifi_server {
     /// Generated trait containing gRPC methods that should be implemented for use with WifiServer.
     #[async_trait]
     pub trait Wifi: Send + Sync + 'static {
-        /// Retrieve a book
+        /// Retrieve a wifi list
         async fn get_wifi(
             &self,
             request: tonic::Request<super::Empty>,
         ) -> std::result::Result<tonic::Response<super::ScanResults>, tonic::Status>;
+        /// Retrieve a known wifi list
         async fn get_known_wifi(
             &self,
             request: tonic::Request<super::Empty>,
