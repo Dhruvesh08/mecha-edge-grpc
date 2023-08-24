@@ -30,7 +30,7 @@ package wifi;
 service Wifi {
   // Retrieve a book
   rpc GetWifi(Empty) returns (ScanResults) {}
-  rpc GetKnownWifi(Empty) returns (ScanResults) {}
+  rpc GetKnownWifi(Empty) returns (NetworkResults) {}
 }
 
 // The request with a id of the book
@@ -47,6 +47,24 @@ message ScanResult {
 
 message ScanResults {
   repeated ScanResult results = 1;
+}
+
+
+/* make message for known wifipub struct NetworkResult {
+    pub network_id: usize,
+    pub ssid: String,
+    pub flags: String,
+} 
+*/
+
+message NetworkResult {
+    string network_id = 1;
+    string ssid = 2;
+    string flags = 3;
+}
+
+message NetworkResults {
+  repeated NetworkResult results = 1;
 }
 
 // syntax = "proto3";

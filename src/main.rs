@@ -3,9 +3,9 @@ use tonic::{transport::Server, Request, Response, Status};
 mod wifi;
 
 use wifi::wifi_server::{Wifi, WifiServer};
-use wifi::{Empty, ScanResult, ScanResults};
+use wifi::{Empty, NetworkResult, NetworkResults, ScanResult, ScanResults};
 
-use mecha_device_sdk::get_wifi_list;
+use mecha_device_sdk::{get_known_wifi_list, get_wifi_list};
 
 //wifi struct with default implementation
 #[derive(Default)]
@@ -15,14 +15,12 @@ pub struct WifiImpl {}
 #[tonic::async_trait]
 impl Wifi for WifiImpl {
     async fn get_wifi(&self, request: Request<Empty>) -> Result<Response<ScanResults>, Status> {
-        println!("Got a request: {:?}", request);
-
         let mut scan_results = ScanResults::default();
+
+        log::info!("Starting All Wifi List Function");
 
         //get wifi list from mecha_edge_sdk
         let wifi_list = get_wifi_list().await.unwrap();
-
-    
 
         //add wifi list to scan_results
         for wifi in wifi_list {
@@ -52,25 +50,21 @@ impl Wifi for WifiImpl {
     async fn get_known_wifi(
         &self,
         request: Request<Empty>,
-    ) -> Result<Response<ScanResults>, Status> {
-        println!("Got a request: {:?}", request);
-
-        let mut scan_results = ScanResults::default();
+    ) -> Result<Response<NetworkResults>, Status> {
+        let mut scan_results = NetworkResults::default();
+        log::info!("Starting Known Wifi List Function");
 
         //get wifi list from mecha_edge_sdk
-        let wifi_list = get_wifi_list().await.unwrap();
+        let wifi_list = get_known_wifi_list().await.unwrap();
 
         //add wifi list to scan_results
         for wifi in wifi_list {
-            let mut scan_result = ScanResult::default();
-            scan_result.mac = wifi.mac;
-            scan_result.frequency = wifi.frequency;
-            scan_result.signal = wifi.signal as i32;
+            let mut scan_result = NetworkResult::default();
+            scan_result.network_id = wifi.network_id.to_string();
             scan_result.flags = wifi.flags;
-            scan_result.name = wifi.name;
+            scan_result.ssid = wifi.ssid;
             scan_results.results.push(scan_result);
         }
-
 
         Ok(Response::new(scan_results))
     }

@@ -23,6 +23,22 @@ pub struct ScanResults {
     #[prost(message, repeated, tag = "1")]
     pub results: ::prost::alloc::vec::Vec<ScanResult>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct NetworkResult {
+    #[prost(string, tag = "1")]
+    pub network_id: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub ssid: ::prost::alloc::string::String,
+    #[prost(string, tag = "3")]
+    pub flags: ::prost::alloc::string::String,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct NetworkResults {
+    #[prost(message, repeated, tag = "1")]
+    pub results: ::prost::alloc::vec::Vec<NetworkResult>,
+}
 /// Generated client implementations.
 pub mod wifi_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
@@ -132,7 +148,7 @@ pub mod wifi_client {
         pub async fn get_known_wifi(
             &mut self,
             request: impl tonic::IntoRequest<super::Empty>,
-        ) -> std::result::Result<tonic::Response<super::ScanResults>, tonic::Status> {
+        ) -> std::result::Result<tonic::Response<super::NetworkResults>, tonic::Status> {
             self.inner
                 .ready()
                 .await
@@ -165,7 +181,7 @@ pub mod wifi_server {
         async fn get_known_wifi(
             &self,
             request: tonic::Request<super::Empty>,
-        ) -> std::result::Result<tonic::Response<super::ScanResults>, tonic::Status>;
+        ) -> std::result::Result<tonic::Response<super::NetworkResults>, tonic::Status>;
     }
     /// The book store service definition.
     #[derive(Debug)]
@@ -294,7 +310,7 @@ pub mod wifi_server {
                     struct GetKnownWifiSvc<T: Wifi>(pub Arc<T>);
                     impl<T: Wifi> tonic::server::UnaryService<super::Empty>
                     for GetKnownWifiSvc<T> {
-                        type Response = super::ScanResults;
+                        type Response = super::NetworkResults;
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
                             tonic::Status,
