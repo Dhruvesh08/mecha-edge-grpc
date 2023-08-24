@@ -1,4 +1,3 @@
-
 syntax = "proto3";
 
 package wifi;
@@ -9,12 +8,26 @@ service Wifi {
   rpc GetWifi(Empty) returns (ScanResults) {}
   // Retrieve a known wifi list
   rpc GetKnownWifi(Empty) returns (NetworkResults) {}
+  // Connect to a wifi network
+  rpc WifiConnect(WifiConnectRequest) returns (WifiConnectResponse) {}
 }
 
-// emplty wifi
+// Empty message
 message Empty {}
 
-// The response details of a wifi list
+// Request message for connecting to a wifi network
+message WifiConnectRequest {
+  string ssid = 1;
+  string psk = 2;
+}
+
+// Response message for wifi connection
+message WifiConnectResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// The response details of a wifi scan
 message ScanResult {
     string mac = 1;
     string frequency = 2;
@@ -23,25 +36,19 @@ message ScanResult {
     string name = 5;
 }
 
+// Response message for a wifi scan
 message ScanResults {
   repeated ScanResult results = 1;
 }
 
-
-
-/* make message for known wifipub struct NetworkResult {
-    pub network_id: usize,
-    pub ssid: String,
-    pub flags: String,
-} 
-*/
+// Network result message
 message NetworkResult {
   int32 network_id = 1;
   string ssid = 2;
   string flags = 3;
 }
 
+// Response message for known wifi list
 message NetworkResults {
   repeated NetworkResult results = 1;
 }
-

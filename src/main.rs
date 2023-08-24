@@ -3,7 +3,10 @@ use tonic::{transport::Server, Request, Response, Status};
 mod wifi;
 
 use wifi::wifi_server::{Wifi, WifiServer};
-use wifi::{Empty, NetworkResult, NetworkResults, ScanResult, ScanResults};
+use wifi::{
+    Empty, NetworkResult, NetworkResults, ScanResult, ScanResults, WifiConnectRequest,
+    WifiConnectResponse,
+};
 
 use mecha_device_sdk::{get_known_wifi_list, get_wifi_list};
 
@@ -33,17 +36,6 @@ impl Wifi for WifiImpl {
             scan_results.results.push(scan_result);
         }
 
-        // add 5 scan results
-        // for i in 0..5 {
-        //     let mut scan_result = ScanResult::default();
-        //     scan_result.mac = format!("test{}", i);
-        //     scan_result.frequency = format!("Strong{}", i);
-        //     scan_result.signal = i;
-        //     scan_result.flags = format!("wifi{}", i);
-        //     scan_result.name = format!("jack{}", i);
-        //     scan_results.results.push(scan_result);
-        // }
-
         Ok(Response::new(scan_results))
     }
 
@@ -67,6 +59,29 @@ impl Wifi for WifiImpl {
         }
 
         Ok(Response::new(scan_results))
+    }
+
+    async fn wifi_connect(
+        &self,
+        request: Request<WifiConnectRequest>,
+    ) -> Result<Response<WifiConnectResponse>, Status> {
+        let wifi_connect_response = WifiConnectResponse::default();
+
+        log::info!("Starting Wifi Connect Function");
+
+        let request_data = request.into_inner();
+
+        //get ssid and psk from request
+        let ssid = request_data.ssid;
+        let psk = request_data.psk;
+
+        //get get_connect_wifi from mecha_edge_sdk
+        //get_connect_wifi  accepts ssid and psk as parameter
+        let _connect_wifi = mecha_device_sdk::get_connect_wifi(&ssid, &psk)
+            .await
+            .unwrap();
+
+        Ok(Response::new(wifi_connect_response))
     }
 }
 

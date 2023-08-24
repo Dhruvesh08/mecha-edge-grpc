@@ -1,8 +1,26 @@
-/// emplty wifi
+/// Empty message
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Empty {}
-/// The response details of a wifi list
+/// Request message for connecting to a wifi network
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct WifiConnectRequest {
+    #[prost(string, tag = "1")]
+    pub ssid: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub psk: ::prost::alloc::string::String,
+}
+/// Response message for wifi connection
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct WifiConnectResponse {
+    #[prost(bool, tag = "1")]
+    pub success: bool,
+    #[prost(string, tag = "2")]
+    pub message: ::prost::alloc::string::String,
+}
+/// The response details of a wifi scan
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ScanResult {
@@ -17,17 +35,14 @@ pub struct ScanResult {
     #[prost(string, tag = "5")]
     pub name: ::prost::alloc::string::String,
 }
+/// Response message for a wifi scan
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ScanResults {
     #[prost(message, repeated, tag = "1")]
     pub results: ::prost::alloc::vec::Vec<ScanResult>,
 }
-/// make message for known wifipub struct NetworkResult {
-/// pub network_id: usize,
-/// pub ssid: String,
-/// pub flags: String,
-/// }
+/// Network result message
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct NetworkResult {
@@ -38,6 +53,7 @@ pub struct NetworkResult {
     #[prost(string, tag = "3")]
     pub flags: ::prost::alloc::string::String,
 }
+/// Response message for known wifi list
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct NetworkResults {
@@ -170,6 +186,29 @@ pub mod wifi_client {
             req.extensions_mut().insert(GrpcMethod::new("wifi.Wifi", "GetKnownWifi"));
             self.inner.unary(req, path, codec).await
         }
+        /// Connect to a wifi network
+        pub async fn wifi_connect(
+            &mut self,
+            request: impl tonic::IntoRequest<super::WifiConnectRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::WifiConnectResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static("/wifi.Wifi/WifiConnect");
+            let mut req = request.into_request();
+            req.extensions_mut().insert(GrpcMethod::new("wifi.Wifi", "WifiConnect"));
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -189,6 +228,14 @@ pub mod wifi_server {
             &self,
             request: tonic::Request<super::Empty>,
         ) -> std::result::Result<tonic::Response<super::NetworkResults>, tonic::Status>;
+        /// Connect to a wifi network
+        async fn wifi_connect(
+            &self,
+            request: tonic::Request<super::WifiConnectRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::WifiConnectResponse>,
+            tonic::Status,
+        >;
     }
     /// The wifi service definition.
     #[derive(Debug)]
@@ -341,6 +388,50 @@ pub mod wifi_server {
                     let fut = async move {
                         let inner = inner.0;
                         let method = GetKnownWifiSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/wifi.Wifi/WifiConnect" => {
+                    #[allow(non_camel_case_types)]
+                    struct WifiConnectSvc<T: Wifi>(pub Arc<T>);
+                    impl<T: Wifi> tonic::server::UnaryService<super::WifiConnectRequest>
+                    for WifiConnectSvc<T> {
+                        type Response = super::WifiConnectResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::WifiConnectRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                (*inner).wifi_connect(request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = WifiConnectSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
