@@ -8,11 +8,14 @@ use wifi_ctrl::{
 
 static LOGGER_INITIALIZED: OnceCell<()> = OnceCell::new();
 
-pub async fn get_wifi_list() -> Result<Vec<ScanResult>> {
+fn initialize_logger() {
     LOGGER_INITIALIZED.get_or_init(|| {
         env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
     });
+}
 
+pub async fn get_wifi_list() -> Result<Vec<ScanResult>> {
+    initialize_logger();
     info!("Starting All Wifi List Function");
 
     let mut setup = sta::WifiSetup::new()?;
@@ -24,21 +27,21 @@ pub async fn get_wifi_list() -> Result<Vec<ScanResult>> {
     let requester = setup.get_request_client();
     let runtime = setup.complete();
 
-    let (_runtime, app, _broadcast) = tokio::join!(
+    let (_runtime, wifi_list, _broadcast) = tokio::join!(
         async move {
             if let Err(e) = runtime.run().await {
                 error!("Error: {}", e);
             }
         },
-        app(requester),
+        wifi_list(requester),
         broadcast_listener(broadcast),
     );
 
-    let wifi_list = app.unwrap();
+    let wifi_list = wifi_list.unwrap();
     Ok(wifi_list)
 }
 
-async fn app(requester: sta::RequestClient) -> Result<Vec<ScanResult>> {
+async fn wifi_list(requester: sta::RequestClient) -> Result<Vec<ScanResult>> {
     info!("Requesting scan");
     let scan = requester.get_scan().await?;
     info!("Scan complete");
@@ -48,9 +51,7 @@ async fn app(requester: sta::RequestClient) -> Result<Vec<ScanResult>> {
 }
 
 pub async fn get_known_wifi_list() -> Result<Vec<NetworkResult>> {
-    LOGGER_INITIALIZED.get_or_init(|| {
-        env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
-    });
+    initialize_logger();
     info!("Starting Known Wifi List Function");
 
     let mut setup = sta::WifiSetup::new()?;
@@ -86,7 +87,7 @@ async fn known_wifi(requester: sta::RequestClient) -> Result<Vec<NetworkResult>>
 }
 
 pub async fn get_connect_wifi(ssid: &str, psk: &str) -> Result<()> {
-    env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
+    initialize_logger();
     info!("Starting Wifi Connection");
 
     let mut setup = sta::WifiSetup::new()?;
