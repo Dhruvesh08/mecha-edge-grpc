@@ -1,3 +1,6 @@
+//use clippy
+#![deny(clippy::all)]
+
 use tonic::{transport::Server, Request, Response, Status};
 
 mod wifi;
@@ -27,12 +30,13 @@ impl Wifi for WifiImpl {
 
         //add wifi list to scan_results
         for wifi in wifi_list {
-            let mut scan_result = ScanResult::default();
-            scan_result.mac = wifi.mac;
-            scan_result.frequency = wifi.frequency;
-            scan_result.signal = wifi.signal as i32;
-            scan_result.flags = wifi.flags;
-            scan_result.name = wifi.name;
+            let scan_result = ScanResult {
+                mac: wifi.mac,
+                frequency: wifi.frequency,
+                signal: wifi.signal as i32,
+                flags: wifi.flags,
+                name: wifi.name,
+            };
             scan_results.results.push(scan_result);
         }
 
@@ -51,10 +55,11 @@ impl Wifi for WifiImpl {
 
         //add wifi list to scan_results
         for wifi in wifi_list {
-            let mut scan_result = NetworkResult::default();
-            scan_result.network_id = wifi.network_id as i32;
-            scan_result.flags = wifi.flags;
-            scan_result.ssid = wifi.ssid;
+            let scan_result = NetworkResult {
+                network_id: wifi.network_id as i32,
+                flags: wifi.flags,
+                ssid: wifi.ssid,
+            };
             scan_results.results.push(scan_result);
         }
 
@@ -130,7 +135,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let addr = "[::1]:50052".parse().unwrap();
     let wifi_store = WifiImpl::default();
 
-    println!("Wifi server listening on {}", addr);
+    println!("Mecha Edgeserver listening on {}", addr);
 
     Server::builder()
         .add_service(WifiServer::new(wifi_store))
