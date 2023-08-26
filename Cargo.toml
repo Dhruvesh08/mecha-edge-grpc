@@ -1,5 +1,5 @@
 [package]
-name = "grpc-v1"
+name = "mecha-edge-server"
 version = "0.1.0"
 edition = "2021"
 
