@@ -10,6 +10,8 @@ service Wifi {
   rpc GetKnownWifi(Empty) returns (NetworkResults) {}
   // Connect to a wifi network
   rpc WifiConnect(WifiConnectRequest) returns (WifiConnectResponse) {}
+  // Remove a wifi network
+  rpc RemoveNetwork(RemoveNetworkRequest) returns (RemoveNetworkResponse) {}
 }
 
 // Empty message
@@ -51,4 +53,15 @@ message NetworkResult {
 // Response message for known wifi list
 message NetworkResults {
   repeated NetworkResult results = 1;
+}
+
+// Request message for removing a wifi network
+message RemoveNetworkRequest {
+  int32 network_id = 1;
+}
+
+// Response message for removing a wifi network
+message RemoveNetworkResponse {
+  bool success = 1;
+  string message = 2;
 }

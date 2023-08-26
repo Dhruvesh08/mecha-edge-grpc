@@ -60,6 +60,22 @@ pub struct NetworkResults {
     #[prost(message, repeated, tag = "1")]
     pub results: ::prost::alloc::vec::Vec<NetworkResult>,
 }
+/// Request message for removing a wifi network
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct RemoveNetworkRequest {
+    #[prost(int32, tag = "1")]
+    pub network_id: i32,
+}
+/// Response message for removing a wifi network
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct RemoveNetworkResponse {
+    #[prost(bool, tag = "1")]
+    pub success: bool,
+    #[prost(string, tag = "2")]
+    pub message: ::prost::alloc::string::String,
+}
 /// Generated client implementations.
 pub mod wifi_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
@@ -209,6 +225,29 @@ pub mod wifi_client {
             req.extensions_mut().insert(GrpcMethod::new("wifi.Wifi", "WifiConnect"));
             self.inner.unary(req, path, codec).await
         }
+        /// Remove a wifi network
+        pub async fn remove_network(
+            &mut self,
+            request: impl tonic::IntoRequest<super::RemoveNetworkRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::RemoveNetworkResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static("/wifi.Wifi/RemoveNetwork");
+            let mut req = request.into_request();
+            req.extensions_mut().insert(GrpcMethod::new("wifi.Wifi", "RemoveNetwork"));
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -234,6 +273,14 @@ pub mod wifi_server {
             request: tonic::Request<super::WifiConnectRequest>,
         ) -> std::result::Result<
             tonic::Response<super::WifiConnectResponse>,
+            tonic::Status,
+        >;
+        /// Remove a wifi network
+        async fn remove_network(
+            &self,
+            request: tonic::Request<super::RemoveNetworkRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::RemoveNetworkResponse>,
             tonic::Status,
         >;
     }
@@ -432,6 +479,52 @@ pub mod wifi_server {
                     let fut = async move {
                         let inner = inner.0;
                         let method = WifiConnectSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/wifi.Wifi/RemoveNetwork" => {
+                    #[allow(non_camel_case_types)]
+                    struct RemoveNetworkSvc<T: Wifi>(pub Arc<T>);
+                    impl<
+                        T: Wifi,
+                    > tonic::server::UnaryService<super::RemoveNetworkRequest>
+                    for RemoveNetworkSvc<T> {
+                        type Response = super::RemoveNetworkResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::RemoveNetworkRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                (*inner).remove_network(request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = RemoveNetworkSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
