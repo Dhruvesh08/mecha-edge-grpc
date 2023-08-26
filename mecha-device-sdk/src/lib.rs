@@ -152,7 +152,6 @@ async fn connect_wifi(requester: sta::RequestClient, ssid: &str, psk: &str) -> R
 
 // remove wifi network from known networks using network id
 pub async fn remove_wifi_network(network_id: usize) -> Result<()> {
-    env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
     info!("Starting Wifi Connection");
 
     let mut setup = sta::WifiSetup::new()?;
