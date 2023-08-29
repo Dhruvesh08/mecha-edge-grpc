@@ -11,7 +11,7 @@ use wifi::{
     ScanResults, WifiConnectRequest, WifiConnectResponse,
 };
 
-use mecha_device_sdk::{get_known_wifi_list, get_wifi_list};
+use mecha_edge_sdk::wifi::WifiModule;
 
 //wifi struct with default implementation
 #[derive(Default)]
@@ -24,10 +24,10 @@ impl Wifi for WifiImpl {
         let mut scan_results = ScanResults::default();
 
         log::info!("Starting All Wifi List Function");
+        let wifi_service = WifiModule::new();
 
         //get wifi list from mecha_edge_sdk
-        let wifi_list = get_wifi_list().await.unwrap();
-
+        let wifi_list = wifi_service.get_wifi_list().await.unwrap();
         //add wifi list to scan_results
         for wifi in wifi_list {
             let scan_result = ScanResult {
@@ -51,8 +51,7 @@ impl Wifi for WifiImpl {
         log::info!("Starting Known Wifi List Function");
 
         //get wifi list from mecha_edge_sdk
-        let wifi_list = get_known_wifi_list().await.unwrap();
-
+        let wifi_list = WifiModule::get_known_wifi_list().await.unwrap();
         //add wifi list to scan_results
         for wifi in wifi_list {
             let scan_result = NetworkResult {
@@ -82,7 +81,7 @@ impl Wifi for WifiImpl {
 
         //get get_connect_wifi from mecha_edge_sdk
         //get_connect_wifi  accepts ssid and psk as parameter
-        let connect_wifi = mecha_device_sdk::get_connect_wifi(&ssid, &psk).await;
+        let connect_wifi = WifiModule::get_connect_wifi(&ssid, &psk).await;
 
         match connect_wifi {
             Ok(_) => {
@@ -113,7 +112,7 @@ impl Wifi for WifiImpl {
 
         //get remove_wifi_network from mecha_edge_sdk
         //remove_wifi_network accepts network_id as parameter
-        let remove_network = mecha_device_sdk::remove_wifi_network(network_id as usize).await;
+        let remove_network = WifiModule::remove_wifi_network(network_id as usize).await;
 
         match remove_network {
             Ok(_) => {
