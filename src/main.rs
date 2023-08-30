@@ -15,7 +15,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let addr = "[::1]:50052".parse().unwrap();
     let wifi_service = WifiService::default();
 
-    println!("Mecha Edgeserver listening on {}", addr);
+    println!("Mecha Edge Server listening on {}", addr);
 
     Server::builder()
         .add_service(WifiServer::new(wifi_service))
