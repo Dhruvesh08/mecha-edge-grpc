@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package display;
+
+service DisplayService {
+    rpc SetDevice (DevicePath) returns (Empty);
+    rpc GetDevice (Empty) returns (DevicePath);
+    rpc SetBrightness (BrightnessRequest) returns (Empty);
+    rpc GetBrightness (Empty) returns (BrightnessResponse);
+    rpc Info (Empty) returns (Empty);
+}
+
+message DevicePath {
+    string path = 1;
+}
+
+message BrightnessRequest {
+    uint32 brightness = 1;
+}
+
+message BrightnessResponse {
+    uint32 brightness = 1;
+}
+
+message Empty {}
