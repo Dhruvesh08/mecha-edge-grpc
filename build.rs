@@ -23,9 +23,10 @@
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let wifi_proto_file = "./proto/wifi.proto";
     let display_proto_file = "./proto/display.proto";
+    let battery_proto_file = "./proto/battery.proto";
     tonic_build::configure().build_server(true).compile(
-        &[wifi_proto_file, display_proto_file],
-        &["./proto/wifi", "/proto/display"],
+        &[wifi_proto_file, display_proto_file, battery_proto_file],
+        &["./proto/wifi", "/proto/display", "/proto/battery"],
     )?;
     Ok(())
 }
