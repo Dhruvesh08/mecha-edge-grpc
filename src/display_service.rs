@@ -1,19 +1,41 @@
-use mecha_edge_sdk::display::{display::DisplayInterface, Display};
+use display_module::{DisplayInterface, DisplayModule};
 
 use tonic::{Request, Response, Status};
 
-use crate::display::{
-    display_service_server::DisplayService, BrightnessRequest, BrightnessResponse, DevicePath,
-    Empty,
+#[allow(non_snake_case)]
+pub mod display {
+    tonic::include_proto!("display");
+}
+
+pub use display::{
+    display_service_server::DisplayService, display_service_server::DisplayServiceServer,
+    BrightnessRequest, BrightnessResponse, DevicePath, Empty,
 };
+
 pub struct DisplayServices {
-    display: Display,
+    pub display: DisplayModule,
+}
+
+impl Default for DisplayServices {
+    fn default() -> Self {
+        DisplayServices {
+            display: DisplayModule {
+                path: String::default(), // You can specify your default value here
+            },
+        }
+    }
 }
 
 #[tonic::async_trait]
 impl DisplayService for DisplayServices {
     async fn set_device(&self, request: Request<DevicePath>) -> Result<Response<Empty>, Status> {
-        // self.display.set_device(&request.get_ref().path);
+        let mut display = DisplayModule {
+            path: request.get_ref().path.to_string(),
+        };
+
+        let path = request.get_ref().path.to_string();
+        display.set_device(&path);
+
         Ok(Response::new(Empty {}))
     }
 

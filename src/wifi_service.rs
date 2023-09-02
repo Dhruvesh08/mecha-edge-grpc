@@ -9,6 +9,7 @@ const NETWORK_REMOVAL_FAILURE_MESSAGE: &str = "WiFi network removal failed";
 #[derive(Default)]
 pub struct WifiService {}
 
+#[allow(non_snake_case)]
 pub mod wifi {
     tonic::include_proto!("wifi");
 }
