@@ -3,17 +3,8 @@
 
 use tonic::transport::Server;
 
-mod wifi;
-mod wifi_module;
-
-mod display;
-mod display_module;
-
-mod battery;
-mod battery_module;
-
-use crate::wifi_module::WifiService;
-use wifi::wifi_server::WifiServer;
+use crate::wifi_service::{WifiServer, WifiService};
+mod wifi_service;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -26,6 +17,5 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .add_service(WifiServer::new(wifi_service))
         .serve(addr)
         .await?;
-
     Ok(())
 }
