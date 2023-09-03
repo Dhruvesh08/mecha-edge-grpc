@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package gyro;
+
+service GyroService {
+    rpc GetAxisValues (Empty) returns (AxisResponse);
+}
+
+message AxisRequest {
+    // You can include any request fields if needed.
+}
+
+message AxisResponse {
+    double x_axis = 1;
+    double y_axis = 2;
+    double z_axis = 3;
+}
+
+message Empty {}

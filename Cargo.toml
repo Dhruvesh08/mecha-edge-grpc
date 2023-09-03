@@ -14,6 +14,7 @@ log = "0.4.20"
 wifi-module = { git = "https://github.com/Dhruvesh08/mecha-edge-sdk/", branch = "sdk-restructure" }
 display-module = { git = "https://github.com/Dhruvesh08/mecha-edge-sdk/", branch = "sdk-restructure" }
 battery-module = { git = "https://github.com/Dhruvesh08/mecha-edge-sdk/", branch = "sdk-restructure" }
+gyroscope-module = { git = "https://github.com/Dhruvesh08/mecha-edge-sdk/", branch = "gyroscope-module" }
 
 
 [build-dependencies]
