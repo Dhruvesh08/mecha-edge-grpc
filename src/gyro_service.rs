@@ -8,8 +8,11 @@ pub mod gyro {
 }
 
 pub use gyro::{
-    gyro_service_server::{GyroService, GyroServiceServer},
-    AxisResponse, Empty,
+    MotionValueResponse,
+    {
+        gyro_service_server::{GyroService, GyroServiceServer},
+        Empty,
+    },
 };
 
 #[derive(Default)]
@@ -17,10 +20,10 @@ pub struct GyroServices;
 
 #[tonic::async_trait]
 impl GyroService for GyroServices {
-    async fn get_axis_values(
+    async fn get_motion_values(
         &self,
         _request: Request<Empty>,
-    ) -> Result<Response<AxisResponse>, Status> {
+    ) -> Result<Response<MotionValueResponse>, Status> {
         //create new gyro object
         let gyro = GyroscopeModule::new(
             "/sys/bus/iio/devices/iio:device1/in_anglvel_x_raw",
@@ -31,7 +34,7 @@ impl GyroService for GyroServices {
         //read axis values
         let (x, y, z) = gyro.read_axis().unwrap();
 
-        let response = AxisResponse {
+        let response = MotionValueResponse {
             x_axis: x,
             y_axis: y,
             z_axis: z,

@@ -3,14 +3,14 @@ syntax = "proto3";
 package gyro;
 
 service GyroService {
-    rpc GetAxisValues (Empty) returns (AxisResponse);
+    rpc GetMotionValues (Empty) returns (MotionValueResponse);
 }
 
 message AxisRequest {
     // You can include any request fields if needed.
 }
 
-message AxisResponse {
+message MotionValueResponse {
     double x_axis = 1;
     double y_axis = 2;
     double z_axis = 3;
